@@ -9,7 +9,7 @@ import ajax from '@codexteam/ajax';
 export default class Uploader {
   /**
    * @param {object} params - uploader module params
-   * @param {ImageConfig} params.config - image tool config
+   * @param {BannerConfig} params.config - banner tool config
    * @param {Function} params.onUpload - one callback for all uploading (file, url, d-n-d, pasting)
    * @param {Function} params.onError - callback for uploading errors
    */
