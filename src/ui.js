@@ -8,9 +8,9 @@ import buttonIcon from './svg/button-icon.svg';
  */
 export default class Ui {
   /**
-   * @param {object} ui - image tool Ui module
+   * @param {object} ui - Banner tool Ui module
    * @param {object} ui.api - Editor.js API
-   * @param {ImageConfig} ui.config - user config
+   * @param {BannerConfig} ui.config - user config
    * @param {Function} ui.onSelectFile - callback for clicks on Select file button
    * @param {boolean} ui.readOnly - read-only mode flag
    */
@@ -21,10 +21,10 @@ export default class Ui {
     this.readOnly = readOnly;
     this.nodes = {
       wrapper: make('div', [this.CSS.baseClass, this.CSS.wrapper]),
-      imageContainer: make('div', [ this.CSS.imageContainer ]),
+      bannerContainer: make('div', [ this.CSS.bannerContainer ]),
       fileButton: this.createFileButton(),
-      imageEl: undefined,
-      imagePreloader: make('div', this.CSS.imagePreloader),
+      bannerEl: undefined,
+      bannerPreloader: make('div', this.CSS.bannerPreloader),
       caption: make('div', [this.CSS.input, this.CSS.caption], {
         contentEditable: !this.readOnly,
       }),
@@ -41,8 +41,8 @@ export default class Ui {
      *  </wrapper>
      */
     this.nodes.caption.dataset.placeholder = this.config.captionPlaceholder;
-    this.nodes.imageContainer.appendChild(this.nodes.imagePreloader);
-    this.nodes.wrapper.appendChild(this.nodes.imageContainer);
+    this.nodes.bannerContainer.appendChild(this.nodes.bannerPreloader);
+    this.nodes.wrapper.appendChild(this.nodes.bannerContainer);
     this.nodes.wrapper.appendChild(this.nodes.caption);
     this.nodes.wrapper.appendChild(this.nodes.fileButton);
   }
@@ -62,11 +62,11 @@ export default class Ui {
       /**
        * Tool's classes
        */
-      wrapper: 'image-tool',
-      imageContainer: 'image-tool__image',
-      imagePreloader: 'image-tool__image-preloader',
-      imageEl: 'image-tool__image-picture',
-      caption: 'image-tool__caption',
+      wrapper: 'banner-tool',
+      bannerContainer: 'banner-tool__image',
+      bannerPreloader: 'banner-tool__image-preloader',
+      bannerEl: 'banner-tool__image-picture',
+      caption: 'banner-tool__caption',
     };
   };
 
@@ -89,7 +89,7 @@ export default class Ui {
   /**
    * Renders tool UI
    *
-   * @param {ImageToolData} toolData - saved tool data
+   * @param {BannerToolData} toolData - saved tool data
    * @returns {Element}
    */
   render(toolData) {
@@ -110,7 +110,7 @@ export default class Ui {
   createFileButton() {
     const button = make('div', [ this.CSS.button ]);
 
-    button.innerHTML = this.config.buttonContent || `${buttonIcon} ${this.api.i18n.t('Select an Image')}`;
+    button.innerHTML = this.config.buttonContent || `${buttonIcon} ${this.api.i18n.t('Select a Banner')}`;
 
     button.addEventListener('click', () => {
       this.onSelectFile();
@@ -126,7 +126,7 @@ export default class Ui {
    * @returns {void}
    */
   showPreloader(src) {
-    this.nodes.imagePreloader.style.backgroundImage = `url(${src})`;
+    this.nodes.bannerPreloader.style.backgroundImage = `url(${src})`;
 
     this.toggleStatus(Ui.status.UPLOADING);
   }
@@ -137,17 +137,17 @@ export default class Ui {
    * @returns {void}
    */
   hidePreloader() {
-    this.nodes.imagePreloader.style.backgroundImage = '';
+    this.nodes.bannerPreloader.style.backgroundImage = '';
     this.toggleStatus(Ui.status.EMPTY);
   }
 
   /**
-   * Shows an image
+   * Shows a banner
    *
    * @param {string} url - image source
    * @returns {void}
    */
-  fillImage(url) {
+  fillBanner(url) {
     /**
      * Check for a source extension to compose element correctly: video tag for mp4, img — for others
      */
@@ -193,23 +193,23 @@ export default class Ui {
      *
      * @type {Element}
      */
-    this.nodes.imageEl = make(tag, this.CSS.imageEl, attributes);
+    this.nodes.bannerEl = make(tag, this.CSS.bannerEl, attributes);
 
     /**
      * Add load event listener
      */
-    this.nodes.imageEl.addEventListener(eventName, () => {
+    this.nodes.bannerEl.addEventListener(eventName, () => {
       this.toggleStatus(Ui.status.FILLED);
 
       /**
        * Preloader does not exists on first rendering with presaved data
        */
-      if (this.nodes.imagePreloader) {
-        this.nodes.imagePreloader.style.backgroundImage = '';
+      if (this.nodes.bannerPreloader) {
+        this.nodes.bannerPreloader.style.backgroundImage = '';
       }
     });
 
-    this.nodes.imageContainer.appendChild(this.nodes.imageEl);
+    this.nodes.bannerContainer.appendChild(this.nodes.bannerEl);
   }
 
   /**
