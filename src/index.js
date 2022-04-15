@@ -338,7 +338,7 @@ export default class BannerTool {
     this._data.file = file || {};
 
     if (file && file.url) {
-      this.ui.fillImage(file.url);
+      this.ui.fillBanner(file.url);
     }
   }
 
