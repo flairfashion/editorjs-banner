@@ -1,5 +1,5 @@
 /**
- * Image Tool for the Editor.js
+ * Banner Tool for the Editor.js
  *
  * @author CodeX <team@codex.so>
  * @license MIT
@@ -19,8 +19,8 @@
  *
  * It will expose 8008 port, so you can pass http://localhost:8008 with the Tools config:
  *
- * image: {
- *   class: ImageTool,
+ * banner: {
+ *   class: BannerTool,
  *   config: {
  *     endpoints: {
  *       byFile: 'http://localhost:8008/uploadFile',
@@ -31,14 +31,12 @@
  */
 
 /**
- * @typedef {object} ImageToolData
- * @description Image Tool's input and output data format
- * @property {string} caption — image caption
- * @property {boolean} withBorder - should image be rendered with border
- * @property {boolean} withBackground - should image be rendered with background
- * @property {boolean} stretched - should image be stretched to full width of container
- * @property {object} file — Image file data returned from backend
- * @property {string} file.url — image URL
+ * @typedef {object} BannerToolData
+ * @description Banner Tool's input and output data format
+ * @property {string} caption — banner caption
+ * @property {boolean} stretched - should banner be stretched to full width of container
+ * @property {object} file — Banner file data returned from backend
+ * @property {string} file.url — banner URL
  */
 
 // eslint-disable-next-line
@@ -49,20 +47,20 @@ import ToolboxIcon from './svg/toolbox.svg';
 import Uploader from './uploader';
 
 /**
- * @typedef {object} ImageConfig
+ * @typedef {object} BannerConfig
  * @description Config supported by Tool
  * @property {object} endpoints - upload endpoints
  * @property {string} endpoints.byFile - upload by file
  * @property {string} endpoints.byUrl - upload by URL
- * @property {string} field - field name for uploaded image
+ * @property {string} field - field name for uploaded banner
  * @property {string} types - available mime-types
  * @property {string} captionPlaceholder - placeholder for Caption field
  * @property {object} additionalRequestData - any data to send with requests
  * @property {object} additionalRequestHeaders - allows to pass custom headers with Request
  * @property {string} buttonContent - overrides for Select File button
  * @property {object} [uploader] - optional custom uploader
- * @property {function(File): Promise.<UploadResponseFormat>} [uploader.uploadByFile] - method that upload image by File
- * @property {function(string): Promise.<UploadResponseFormat>} [uploader.uploadByUrl] - method that upload image by URL
+ * @property {function(File): Promise.<UploadResponseFormat>} [uploader.uploadByFile] - method that upload banner by File
+ * @property {function(string): Promise.<UploadResponseFormat>} [uploader.uploadByUrl] - method that upload banner by URL
  */
 
 /**
@@ -72,9 +70,9 @@ import Uploader from './uploader';
  * @property {object} file - Object with file data.
  *                           'url' is required,
  *                           also can contain any additional data that will be saved and passed back
- * @property {string} file.url - [Required] image source URL
+ * @property {string} file.url - [Required] banner source URL
  */
-export default class ImageTool {
+export default class BannerTool {
   /**
    * Notify core that read-only mode is supported
    *
@@ -94,14 +92,14 @@ export default class ImageTool {
   static get toolbox() {
     return {
       icon: ToolboxIcon,
-      title: 'Image',
+      title: 'Banner',
     };
   }
 
   /**
    * @param {object} tool - tool properties got from editor.js
-   * @param {ImageToolData} tool.data - previously saved data
-   * @param {ImageConfig} tool.config - user config for Tool
+   * @param {BannerToolData} tool.data - previously saved data
+   * @param {BannerConfig} tool.config - user config for Tool
    * @param {object} tool.api - Editor.js API
    * @param {boolean} tool.readOnly - read-only mode flag
    */
@@ -177,9 +175,9 @@ export default class ImageTool {
   }
 
   /**
-   * Validate data: check if Image exists
+   * Validate data: check if Banner exists
    *
-   * @param {ImageToolData} savedData — data received after saving
+   * @param {BannerToolData} savedData — data received after saving
    * @returns {boolean} false if saved data is not correct, otherwise true
    * @public
    */
@@ -192,7 +190,7 @@ export default class ImageTool {
    *
    * @public
    *
-   * @returns {ImageToolData}
+   * @returns {BannerToolData}
    */
   save() {
     const caption = this.ui.nodes.caption;
@@ -203,7 +201,7 @@ export default class ImageTool {
   }
 
   /**
-   * Makes buttons with tunes: add background, add border, stretch image
+   * Makes buttons with tunes: add background, add border, stretch banner
    *
    * @public
    *
@@ -214,7 +212,7 @@ export default class ImageTool {
   }
 
   /**
-   * Fires after clicks on the Toolbox Image Icon
+   * Fires after clicks on the Toolbox Banner Icon
    * Initiates click on the Select File button
    *
    * @public
@@ -237,10 +235,10 @@ export default class ImageTool {
       tags: [ 'img' ],
 
       /**
-       * Paste URL of image into the Editor
+       * Paste URL of banner into the Editor
        */
       patterns: {
-        image: /https?:\/\/\S+\.(gif|jpe?g|tiff|png)$/i,
+        banner: /https?:\/\/\S+\.(gif|jpe?g|tiff|png)$/i,
       },
 
       /**
@@ -264,18 +262,18 @@ export default class ImageTool {
   async onPaste(event) {
     switch (event.type) {
       case 'tag': {
-        const image = event.detail.data;
+        const banner = event.detail.data;
 
         /** Images from PDF */
-        if (/^blob:/.test(image.src)) {
-          const response = await fetch(image.src);
+        if (/^blob:/.test(banner.src)) {
+          const response = await fetch(banner.src);
           const file = await response.blob();
 
           this.uploadFile(file);
           break;
         }
 
-        this.uploadUrl(image.src);
+        this.uploadUrl(banner.src);
         break;
       }
       case 'pattern': {
@@ -303,10 +301,10 @@ export default class ImageTool {
    *
    * @private
    *
-   * @param {ImageToolData} data - data in Image Tool format
+   * @param {BannerToolData} data - data in Banner Tool format
    */
   set data(data) {
-    this.image = data.file;
+    this.banner = data.file;
 
     this._data.caption = data.caption || '';
     this.ui.fillCaption(this._data.caption);
@@ -323,20 +321,20 @@ export default class ImageTool {
    *
    * @private
    *
-   * @returns {ImageToolData}
+   * @returns {BannerToolData}
    */
   get data() {
     return this._data;
   }
 
   /**
-   * Set new image file
+   * Set new banner file
    *
    * @private
    *
    * @param {object} file - uploaded file data
    */
-  set image(file) {
+  set banner(file) {
     this._data.file = file || {};
 
     if (file && file.url) {
@@ -354,7 +352,7 @@ export default class ImageTool {
    */
   onUpload(response) {
     if (response.success && response.file) {
-      this.image = response.file;
+      this.banner = response.file;
     } else {
       this.uploadingFailed('incorrect response: ' + JSON.stringify(response));
     }
@@ -368,10 +366,10 @@ export default class ImageTool {
    * @returns {void}
    */
   uploadingFailed(errorText) {
-    console.log('Image Tool: uploading failed because of', errorText);
+    console.log('Banner Tool: uploading failed because of', errorText);
 
     this.api.notifier.show({
-      message: this.api.i18n.t('Couldn’t upload image. Please try another.'),
+      message: this.api.i18n.t('Couldn’t upload banner. Please try another.'),
       style: 'error',
     });
     this.ui.hidePreloader();
@@ -418,7 +416,7 @@ export default class ImageTool {
   }
 
   /**
-   * Show preloader and upload image file
+   * Show preloader and upload banner file
    *
    * @param {File} file - file that is currently uploading (from paste)
    * @returns {void}
@@ -432,7 +430,7 @@ export default class ImageTool {
   }
 
   /**
-   * Show preloader and upload image by target url
+   * Show preloader and upload banner by target url
    *
    * @param {string} url - url pasted
    * @returns {void}
