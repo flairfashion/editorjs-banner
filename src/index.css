@@ -1,4 +1,4 @@
-.image-tool {
+.banner-tool {
   --bg-color: #cdd1e0;
   --front-color: #388ae5;
   --border-color: #e8e8eb;
@@ -37,7 +37,7 @@
         top: 50%;
         margin-top: -30px;
         margin-left: -30px;
-        animation: image-preloader-spin 2s infinite linear;
+        animation: banner-preloader-spin 2s infinite linear;
         box-sizing: border-box;
       }
     }
@@ -137,7 +137,7 @@
   }
 }
 
-@keyframes image-preloader-spin {
+@keyframes banner-preloader-spin {
   0% {
     transform: rotate(0deg);
   }
