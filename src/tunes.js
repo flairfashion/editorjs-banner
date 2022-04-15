@@ -21,27 +21,17 @@ export default class Tunes {
   }
 
   /**
-   * Available Image tunes
+   * Available Banner tunes
    *
    * @returns {{name: string, icon: string, title: string}[]}
    */
   static get tunes() {
     return [
       {
-        name: 'withBorder',
-        icon: borderIcon,
-        title: 'With border',
-      },
-      {
         name: 'stretched',
         icon: stretchedIcon,
-        title: 'Stretch image',
-      },
-      {
-        name: 'withBackground',
-        icon: bgIcon,
-        title: 'With background',
-      },
+        title: 'Stretch banner',
+      }
     ];
   }
 
@@ -54,15 +44,15 @@ export default class Tunes {
     return {
       wrapper: '',
       buttonBase: this.api.styles.settingsButton,
-      button: 'image-tool__tune',
+      button: 'banner-tool__tune',
       buttonActive: this.api.styles.settingsButtonActive,
     };
   }
 
   /**
-   * Makes buttons with tunes: add background, add border, stretch image
+   * Makes buttons with tunes: add background, add border, stretch banner
    *
-   * @param {ImageToolData} toolData - generate Elements of tunes
+   * @param {BannerToolData} toolData - generate Elements of tunes
    * @returns {Element}
    */
   render(toolData) {
